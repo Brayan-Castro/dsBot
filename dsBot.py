@@ -19,7 +19,8 @@ async def on_message(message):
         return
 
     if "engraçado" in message.content.lower():
-        await message.channel.send(f"NOSSA {message.author} QUE ENGRAÇADO HAHAHAHAHAHA")
+        for i in range(6):
+            await message.channel.send(f"NOSSA {message.author.mention} QUE ENGRAÇADO HAHAHAHAHAHA")
 
 @bot.command(name="hi")
 async def hello(ctx):
