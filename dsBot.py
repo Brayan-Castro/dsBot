@@ -1,8 +1,9 @@
 import discord
 import random
 from discord.ext import commands
+from pathlib import Path
 
-token = open("token.txt").read()
+token = Path(__file__).with_name("token.txt").open().read()
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -12,40 +13,49 @@ bot = commands.Bot(command_prefix="$", intents=intents)
 async def on_ready():
     print(f"logged in as: {bot.user}")
 
+@bot.listen()
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    if "engraçado" in message.content.lower():
+        await message.channel.send(f"NOSSA {message.author} QUE ENGRAÇADO HAHAHAHAHAHA")
+
 @bot.command(name="hi")
 async def hello(ctx):
-    await ctx.send(f"Hello, {ctx.message.author}")
+    await ctx.send(f"Hello, {ctx.message.author.name}")
 
 @bot.command(name="r")
-async def roll(ctx, arg):
-    sumRandom = 0
+async def roll(ctx, args):
+    numDice = ""
+    maxDice = ""
+    prof = ""
     rolls = []
-    numDice = int(arg[0])
+    i = 0
+    while args[i] != 'd':
+        numDice += args[i]
+        i += 1
+    
+    i += 1
 
-    if arg[3].isdigit():
-        maxDice = int(arg[2] + arg[3])
-        plusMinus = arg[4]
-        if arg[-2].isdigit():
-            prof = int(arg[-2] + arg[-1])
-        else:
-            prof = int(arg[5])
-    else:
-        maxDice = int(arg[2])
-        plusMinus = arg[3]
-        prof = int(arg[4])
-        if arg[-2].isdigit():
-            prof = int(arg[-2] + arg[-1])
-        else:
-            prof = int(arg[4])
-    
-    
-    for i in range(numDice):
-        rolls.append(random.randint(1, maxDice))
-        sumRandom += rolls[i]
-    
-    if plusMinus == "+":
-        await ctx.reply(f"{rolls} - {sumRandom} + {prof} = **{sumRandom + prof}**")
-    else:
-        await ctx.reply(f"{rolls} - {sumRandom} + {prof} = **{sumRandom - prof}**")
+    while True:
+        if args[i] == '+' or args[i] == '-':
+            break
+        maxDice += args[i]
+        i += 1
+
+    i += 1
+
+    while i != len(args):
+        prof += args[i]
+        i += 1
+
+    for nums in range(int(numDice)):
+        rolls.append(random.randint(0, int(maxDice)))
+
+    if "+" in args:
+        await ctx.reply(f"{rolls} **|** {sum(rolls)} + {prof} = **{sum(rolls) + int(prof)}**")
+    elif "-" in args:
+        await ctx.reply(f"{rolls} **|** {sum(rolls)} - {prof} = **{sum(rolls) - int(prof)}**")
 
 bot.run(token)
