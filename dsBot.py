@@ -2,7 +2,7 @@ import discord
 import random
 from discord.ext import commands
 from pathlib import Path
-
+# test commit
 token = Path(__file__).with_name("token.txt").open().read()
 
 intents = discord.Intents.default()
@@ -52,7 +52,7 @@ async def roll(ctx, args):
         i += 1
 
     for nums in range(int(numDice)):
-        rolls.append(random.randint(0, int(maxDice)))
+        rolls.append(random.randint(1, int(maxDice)))
 
     if "+" in args:
         await ctx.reply(f"{rolls} **|** {sum(rolls)} + {prof} = **{sum(rolls) + int(prof)}**")
